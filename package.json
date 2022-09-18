@@ -1,50 +1,60 @@
 {
-  "name": "poems",
-  "displayName": "poems",
-  "description": "Helps you write poems",
-  "version": "0.0.1",
-  "engines": {
-    "vscode": "^1.71.0"
-  },
-  "categories": [
-    "Other"
-  ],
-  "activationEvents": [
-    "onCommand:poems.helloWorld"
-  ],
-  "browser": "./dist/web/extension.js",
-  "contributes": {
-    "commands": [
-      {
-        "command": "poems.helloWorld",
-        "title": "Hello World"
-      }
-    ]
-  },
-  "scripts": {
-    "test": "vscode-test-web --browserType=chromium --extensionDevelopmentPath=. --extensionTestsPath=dist/web/test/suite/index.js",
-    "pretest": "npm run compile-web",
-    "vscode:prepublish": "npm run package-web",
-    "compile-web": "webpack",
-    "watch-web": "webpack --watch",
-    "package-web": "webpack --mode production --devtool hidden-source-map",
-    "lint": "eslint src --ext ts",
-    "run-in-browser": "vscode-test-web --browserType=chromium --extensionDevelopmentPath=. ."
-  },
-  "devDependencies": {
-    "@types/vscode": "^1.71.0",
-    "@types/mocha": "^9.1.1",
-    "eslint": "^8.20.0",
-    "@typescript-eslint/eslint-plugin": "^5.31.0",
-    "@typescript-eslint/parser": "^5.31.0",
-    "mocha": "^10.0.0",
-    "typescript": "^4.7.4",
-    "@vscode/test-web": "^0.0.29",
-    "ts-loader": "^9.3.1",
-    "webpack": "^5.74.0",
-    "webpack-cli": "^4.10.0",
-    "@types/webpack-env": "^1.17.0",
-    "assert": "^2.0.0",
-    "process": "^0.11.10"
-  }
+    "name": "poems",
+    "displayName": "poems",
+    "description": "Helps you write poems",
+    "version": "0.0.0",
+    "engines": {
+        "vscode": "^1.71.0"
+    },
+    "categories": [
+        "Other"
+    ],
+    "activationEvents": [
+        "onCommand:poems.helloWorld"
+    ],
+    "browser": "./dist/web/extension.js",
+    "contributes": {
+        "commands": [
+        {
+            "command": "poems.helloWorld",
+            "title": "Hello World"
+        }
+        ]
+    },
+    "scripts": {
+        "test-e2e": "vscode-test-web --browserType=chromium --extensionDevelopmentPath=. --extensionTestsPath=dist/web/test/suite/index.js",
+        "pretest": "npm run compile-web",
+        "vscode:prepublish": "npm run package-web",
+        "compile": "npm run compile-web",
+        "compile-web": "webpack",
+        "watch-web": "webpack --watch",
+        "package-web": "webpack --mode production --devtool hidden-source-map",
+        "run-in-browser": "vscode-test-web --browserType=chromium --extensionDevelopmentPath=. .",
+        "test": "./node_modules/.bin/jest --no-cache --config ./config/jest.config.js",
+        "test-coverage": "./node_modules/.bin/jest --no-cache --config ./config/jest.config.js --coverage",
+        "style": "./node_modules/.bin/prettier --config ./config/prettier.json  --write \"@(src|test|scripts)/**/*.@(ts|js|md|html|css|json)\"",
+        "style-check": "./node_modules/.bin/prettier --config ./config/prettier.json  --check \"@(src|test)/**/*.@(ts|js|md|html|css|json)\"",
+        "lint": "./node_modules/.bin/eslint --config ./config/eslint.json --no-eslintrc \"@(src|test|scripts)/**/*.@(ts|js)\"",
+        "lint-fix": "./node_modules/.bin/eslint --config ./config/eslint.json --no-eslintrc --fix \"@(src|test|scripts)/**/*.@(ts|js)\"",
+        "clean": "node ./scripts/clean.js dist && node ./scripts/clean.js temp"
+    },
+    "devDependencies": {
+        "@types/mocha": "^9.1.1",
+        "@types/vscode": "^1.71.0",
+        "@types/webpack-env": "^1.17.0",
+        "@typescript-eslint/eslint-plugin": "^5.31.0",
+        "@typescript-eslint/parser": "^5.31.0",
+        "@vscode/test-web": "^0.0.29",
+        "assert": "^2.0.0",
+        "eslint": "^8.20.0",
+        "mocha": "^10.0.0",
+        "process": "^0.11.10",
+        "ts-loader": "^9.3.1",
+        "typescript": "^4.7.4",
+        "webpack": "^5.74.0",
+        "webpack-cli": "^4.10.0"
+    },
+    "dependencies": {
+        "prettier": "^2.7.1"
+    }
 }
