@@ -1,4 +1,4 @@
-# This workflow will do a clean install of node dependencies, build the source code and run tests
+# This workflow will do a clean install of node dependencies, build the source code, run tests, and publish
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
 
 name: Main
@@ -6,8 +6,9 @@ name: Main
 on:
   # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#workflow_dispatch
   workflow_dispatch:
+    # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#onworkflow_callinputs
     inputs:
-      tags:
+      publish:
         description: 'Publish'
         type: boolean
         default: false
@@ -58,7 +59,7 @@ jobs:
     - name: Package
       run: npm run vsce-package
     - name: Publish
-      run: echo npm run vsce-publish ${{ env.TEST }}
-      if: ${{ inputs.username.deploy }}
+      run: echo npm run vsce-publish $TEST
+      if: ${{ inputs.deploy }}
       env:
         TEST: ${{ env.SECRET_MESSAGE }}
