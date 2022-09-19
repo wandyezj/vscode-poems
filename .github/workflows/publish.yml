@@ -1,6 +1,8 @@
 # This workflow will do a clean install of node dependencies, build the source code, run tests, and publish
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
 
+# Manually Run from: https://github.com/wandyezj/vscode-poems/actions/workflows/publish.yml
+
 name: Publish
 
 on:
@@ -60,6 +62,6 @@ jobs:
       run: npm run vsce-package
     - name: Publish
       run: echo npm run vsce-publish $TEST
-      if: ${{ inputs.deploy }}
+      if: ${{ inputs.publish }}
       env:
         TEST: ${{ env.SECRET_MESSAGE }}
