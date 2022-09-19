@@ -32,7 +32,7 @@ jobs:
       run: npm --version
     
     - name: Clean Install
-      run: npm i
+      run: npm ci
 
     # Check Environment
     - name: Check
