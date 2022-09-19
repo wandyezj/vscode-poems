@@ -1,7 +1,7 @@
 # This workflow will do a clean install of node dependencies, build the source code, run tests, and publish
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
 
-name: Main
+name: Publish
 
 on:
   # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#workflow_dispatch
