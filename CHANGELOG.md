@@ -6,4 +6,8 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
-- Initial release
+## [0.0.0] - 2022-09-19
+
+### Added
+
+- `Poems Version` command to show the current version of the extension.

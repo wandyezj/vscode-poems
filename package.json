@@ -12,14 +12,14 @@
         "Other"
     ],
     "activationEvents": [
-        "onCommand:poems.helloWorld"
+        "onCommand:poems.version"
     ],
     "browser": "./dist/web/extension.js",
     "contributes": {
         "commands": [
             {
-                "command": "poems.helloWorld",
-                "title": "Hello World"
+                "command": "poems.version",
+                "title": "Poems Version"
             }
         ]
     },

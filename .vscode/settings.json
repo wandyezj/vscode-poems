@@ -36,7 +36,12 @@
         "extends": "./config/markdownlint.json"
     },
 
-    "cSpell.words": ["linebreak", "markdownlint", "prettierrc"],
+    "cSpell.words": [
+        "linebreak",
+        "markdownlint",
+        "prettierrc",
+        "vsix"
+    ],
 
     "files.exclude": {
         "node_modules": true,

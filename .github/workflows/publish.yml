@@ -1,3 +1,4 @@
+# Workflow to publish the extension to the store
 # This workflow will do a clean install of node dependencies, build the source code, run tests, and publish
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
 
@@ -11,7 +12,7 @@ on:
     # https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#onworkflow_callinputs
     inputs:
       publish:
-        description: 'Publish'
+        description: 'Publish Extension'
         type: boolean
         default: false
         required: false
@@ -60,9 +61,10 @@ jobs:
     # Build
     - name: Package
       run: npm run vsce-package
+
+    # Publish packaged package if publish is checked.
     - name: Publish
-      run: echo npm run vsce-publish [ $TEST ]
+      run: npm run vsce-publish
       if: ${{ inputs.publish }}
       env:
-        TEST: ${{ secrets.SECRET_MESSAGE }}
         VSCE_PAT: ${{ secrets.VSCE_PAT }}
