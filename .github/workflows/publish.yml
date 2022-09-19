@@ -1,0 +1,64 @@
+# This workflow will do a clean install of node dependencies, build the source code and run tests
+# For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
+
+name: Main
+
+on:
+  # https://docs.github.com/en/actions/using-workflows/events-that-trigger-workflows#workflow_dispatch
+  workflow_dispatch:
+    inputs:
+      tags:
+        description: 'Publish'
+        type: boolean
+        default: false
+        required: false
+jobs:
+  build:
+    # Match Development Operating System
+    runs-on: ubuntu-latest
+    environment: Publish
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js
+      uses: actions/setup-node@v2
+      with:
+        # Match Development Node Version
+        node-version: '16.x'
+
+    # Tool Versions
+    - name: Node Version
+      run: node --version
+    - name: NPM Version
+      run: npm --version
+
+    - name: Clean Install
+      run: npm ci
+
+    # Check Environment
+    - name: Check
+      env:
+        BRANCH_NAME: ${{ github.ref }}
+      run: npm run check-environment --if-present
+
+    # Check Code
+    # Style Check ensures that code is consistently styled
+    - name: Style Check
+      run: npm run style-check
+    - name: Lint Check
+      run: npm run lint
+
+    - name: Clean
+      run: npm run clean
+    - name: Compile
+      run: npm run compile
+    - name: Test
+      run: npm test
+
+    # Build
+    - name: Package
+      run: npm run vsce-package
+    - name: Publish
+      run: echo npm run vsce-publish ${{ env.TEST }}
+      if: ${{ inputs.username.deploy }}
+      env:
+        TEST: ${{ env.SECRET_MESSAGE }}

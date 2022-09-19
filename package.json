@@ -1,8 +1,10 @@
 {
     "name": "poems",
     "displayName": "poems",
-    "description": "Helps you write poems",
+    "description": "Helps you write poems in markdown.",
     "version": "0.0.0",
+    "publisher": "wandyezj",
+    "icon": "media/logo-128.png",
     "engines": {
         "vscode": "^1.71.0"
     },
@@ -23,8 +25,9 @@
     },
     "scripts": {
         "vsix": "npm run vsce-package",
-        "vsce-package": "./node_modules/.bin/vsce package --allow-star-activation --allow-missing-repository --target web --out ./dist/office-script-extension.vsix",
-        "vsce-publish": "./node_modules/.bin/vsce publish --allow-star-activation --allow-missing-repository --noVerify --packagePath ./dist/office-script-extension.vsix",
+        "vsce": "./node_modules/.bin/vsce",
+        "vsce-package": "./node_modules/.bin/vsce package --out ./dist/office-script-extension.vsix",
+        "vsce-publish": "./node_modules/.bin/vsce publish --packagePath ./dist/office-script-extension.vsix",
         "build": "npm run style && npm run lint && npm run clean && npm run compile && npm run test",
         "test-e2e": "vscode-test-web --browserType=chromium --extensionDevelopmentPath=. --extensionTestsPath=dist/web/test/suite/index.js",
         "vscode:prepublish": "npm run clean && npm run package-web",
