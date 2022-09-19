@@ -61,7 +61,8 @@ jobs:
     - name: Package
       run: npm run vsce-package
     - name: Publish
-      run: echo npm run vsce-publish $TEST
+      run: echo npm run vsce-publish [ $TEST ]
       if: ${{ inputs.publish }}
       env:
-        TEST: ${{ env.SECRET_MESSAGE }}
+        TEST: ${{ secrets.SECRET_MESSAGE }}
+        VSCE_PAT: ${{ secrets.VSCE_PAT }}
