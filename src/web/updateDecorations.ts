@@ -20,8 +20,6 @@ export function updateDecorations(activeEditor: vscode.TextEditor) {
 
         logTrace(`blocks ${blocks.length}`);
 
-        // search until there are no more
-
         // const variableDecorationType = getVariableDecorationType();
 
         // const decorations = getDecorations(text);
@@ -55,6 +53,7 @@ function getHaikuBlocks(text: string): HaikuBlock[] {
 
     let currentIndexBegin = text.indexOf(delimiterHaikuBlockStart, 0);
 
+    // search until there are no more
     while (currentIndexBegin !== -1) {
         const currentIndexEndStart = text.indexOf(
             delimiterHaikuBlockEnd,
@@ -63,11 +62,11 @@ function getHaikuBlocks(text: string): HaikuBlock[] {
 
         if (currentIndexEndStart === -1) {
             // no end
+            // all done
             break;
         }
 
-        const currentIndexEnd =
-            currentIndexEndStart + delimiterHaikuBlockEnd.length;
+        const currentIndexEnd = currentIndexEndStart + delimiterHaikuBlockEnd.length;
 
         const blockText = text.substring(currentIndexBegin, currentIndexEnd);
 
@@ -80,10 +79,7 @@ function getHaikuBlocks(text: string): HaikuBlock[] {
             text: blockText,
         });
 
-        currentIndexBegin = text.indexOf(
-            delimiterHaikuBlockStart,
-            currentIndexEnd
-        );
+        currentIndexBegin = text.indexOf(delimiterHaikuBlockStart, currentIndexEnd);
     }
 
     return blocks;
