@@ -3,6 +3,9 @@
 import * as vscode from "vscode";
 import * as Package from "../../package.json";
 import { createCommandVersion } from "./createCommandVersion";
+import { createUpdateDecorationsTrigger } from "./createUpdateDecorationsTrigger";
+import { createTrace, logTrace } from "./logTrace";
+import { updateDecorations } from "./updateDecorations";
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -11,7 +14,21 @@ export function activate(context: vscode.ExtensionContext) {
     // This line of code will only be executed once when your extension is activated
     console.log(`${Package.name} ${Package.version} is now active`);
 
-    context.subscriptions.push(createCommandVersion());
+    // Global trace see in Output -> poems
+    createTrace(`${Package.name}`);
+    logTrace(`activate ${Package.name} ${Package.version}`);
+
+    context.subscriptions.push(
+        ...[
+            createCommandVersion(),
+
+            // When in a markdown file activate
+            // parse markdown file loop for ```poems-haiku ``` sections and analyze the poems within applying highlighting
+            ...createUpdateDecorationsTrigger(updateDecorations),
+        ]
+    );
+
+
 }
 
 // this method is called when your extension is deactivated

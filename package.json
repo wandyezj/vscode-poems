@@ -12,7 +12,8 @@
         "Other"
     ],
     "activationEvents": [
-        "onCommand:poems.version"
+        "onCommand:poems.version",
+        "onLanguage:markdown"
     ],
     "browser": "./dist/web/extension.js",
     "contributes": {
