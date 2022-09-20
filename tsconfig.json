@@ -6,6 +6,7 @@
 		"lib": [
 			"ES2020", "WebWorker"
 		],
+		"rootDirs": ["src", "."], // "." needed for package version
 		"resolveJsonModule": true,
 		"sourceMap": true,
 		"strict": true   /* enable all strict type-checking options */
@@ -15,5 +16,8 @@
 		// "noUnusedParameters": true,  /* Report errors on unused parameters. */
 
 	},
-	"include": ["src/web/extension.ts"]
+	"exclude": [
+		"node_modules",
+		".vscode-test-web"
+	]
 }

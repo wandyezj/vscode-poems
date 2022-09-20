@@ -11,7 +11,22 @@ export interface HaikuBlock {
     };
 
     /**
-     * text
+     * text between block delimiters
      */
-    text: string;
+    innerText: {
+        /**
+         * where text starts
+         */
+        start: number;
+
+        /**
+         * where text ends
+         */
+        end: number;
+
+        /**
+         * text
+         */
+        text: string;
+    };
 }

@@ -2,7 +2,8 @@ import { logTrace } from "./logTrace";
 import * as vscode from "vscode";
 import { getHaikuBlocks } from "./getHaikuBlocks";
 import { HaikuBlock } from "./HaikuBlock";
-import { getDecorationType } from "./getDecorationType";
+import { getDecorationTypeHaiku } from "./getDecorationTypeHaikuBlock";
+import { analyzeHaikuBlock, HaikuLintType } from "./analyzeHaikuBlock";
 
 /**
  * Update decorations for the active editor
@@ -24,30 +25,77 @@ export function updateDecorations(activeEditor: vscode.TextEditor) {
 
         logTrace(`blocks ${blocks.length}`);
 
-        const decorations = getDecorations(blocks, document);
-        const variableDecorationType = getDecorationType();
-        activeEditor.setDecorations(variableDecorationType, decorations);
+        const decorationsMap = getDecorations(blocks, document);
+        for (const [lintType, decorations] of decorationsMap.entries()) {
+            const decorationType = getDecorationTypeHaiku(lintType);
+            activeEditor.setDecorations(decorationType, decorations);
+        }
+
         logTrace("wrote Decorations");
     }
 }
 
+/**
+ * Get all decorations consolidated by HaikuLintType
+ * @param blocks
+ * @param document
+ * @returns
+ */
 function getDecorations(
     blocks: HaikuBlock[],
     document: vscode.TextDocument
-): vscode.DecorationOptions[] {
-    const decorations = blocks.map((block) => {
-        const positionStart = document.positionAt(block.index.start);
-        const positionEnd = document.positionAt(block.index.end);
+): Map<HaikuLintType, vscode.DecorationOptions[]> {
+    // generate all lints for each block
+    const lints = blocks
+        .map((block) => {
+            const found = analyzeHaikuBlock(block);
+            const mappedLints = found.map((lint) => {
+                const positionStart = document.positionAt(lint.indexStart + block.innerText.start);
+                const positionEnd = document.positionAt(lint.indexEnd + block.innerText.start);
 
-        const range = new vscode.Range(positionStart, positionEnd);
+                const range = new vscode.Range(positionStart, positionEnd);
+                const hoverMessage = lint.message;
+                const lintType = lint.lintType;
 
-        const value = {
-            range,
-            hoverMessage: `haiku block`,
-        };
+                return {
+                    lintType,
+                    range,
+                    hoverMessage,
+                };
+            });
 
-        return value;
+            return mappedLints;
+        })
+        .flat();
+
+    // consolidate by lint type
+    const map = new Map<HaikuLintType, vscode.DecorationOptions[]>();
+    lints.forEach((lint) => {
+        const kind = lint.lintType;
+        if (!map.has(kind)) {
+            map.set(kind, []);
+        }
+
+        map.get(kind)?.push({
+            range: lint.range,
+            hoverMessage: lint.hoverMessage,
+        });
     });
 
-    return decorations;
+    return map;
 }
+
+// function getBlockDecorations(block: HaikuBlock,
+//     document: vscode.TextDocument) {
+//     const positionStart = document.positionAt(block.index.start);
+//     const positionEnd = document.positionAt(block.index.end);
+
+//     const range = new vscode.Range(positionStart, positionEnd);
+
+//     const value = {
+//         range,
+//         hoverMessage: `haiku block`,
+//     };
+
+//     return value;
+// }

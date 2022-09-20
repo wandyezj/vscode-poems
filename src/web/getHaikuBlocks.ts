@@ -23,7 +23,10 @@ export function getHaikuBlocks(text: string): HaikuBlock[] {
 
         const currentIndexEnd = currentIndexEndStart + delimiterHaikuBlockEnd.length;
 
-        const blockText = text.substring(currentIndexBegin, currentIndexEnd);
+        const blockText = text.substring(
+            currentIndexBegin + delimiterHaikuBlockStart.length,
+            currentIndexEndStart
+        );
 
         // add index
         blocks.push({
@@ -31,7 +34,15 @@ export function getHaikuBlocks(text: string): HaikuBlock[] {
                 start: currentIndexBegin,
                 end: currentIndexEnd,
             },
-            text: blockText,
+
+            /**
+             * text between the delimiters
+             */
+            innerText: {
+                start: currentIndexBegin + delimiterHaikuBlockStart.length,
+                end: currentIndexEnd,
+                text: blockText,
+            },
         });
 
         currentIndexBegin = text.indexOf(delimiterHaikuBlockStart, currentIndexEnd);
