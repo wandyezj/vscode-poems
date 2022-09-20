@@ -1,6 +1,6 @@
 import { logTrace } from "./logTrace";
 import * as vscode from "vscode";
-
+import {getHaikuBlocks} from "./getHaikuBlocks"
 /**
  * Update decorations for the active editor
  * @param activeEditor
@@ -26,61 +26,4 @@ export function updateDecorations(activeEditor: vscode.TextEditor) {
         // activeEditor.setDecorations(variableDecorationType, decorations);
         // logTrace("wrote Decorations");
     }
-}
-
-interface HaikuBlock {
-    index: {
-        /**
-         * before block start
-         */
-        start: number;
-        /**
-         * after block end
-         */
-        end: number;
-    };
-    /**
-     * text
-     */
-    text: string;
-}
-
-function getHaikuBlocks(text: string): HaikuBlock[] {
-    const delimiterHaikuBlockStart = "```poems-haiku";
-    const delimiterHaikuBlockEnd = "```";
-
-    const blocks: HaikuBlock[] = [];
-
-    let currentIndexBegin = text.indexOf(delimiterHaikuBlockStart, 0);
-
-    // search until there are no more
-    while (currentIndexBegin !== -1) {
-        const currentIndexEndStart = text.indexOf(
-            delimiterHaikuBlockEnd,
-            currentIndexBegin + delimiterHaikuBlockStart.length
-        );
-
-        if (currentIndexEndStart === -1) {
-            // no end
-            // all done
-            break;
-        }
-
-        const currentIndexEnd = currentIndexEndStart + delimiterHaikuBlockEnd.length;
-
-        const blockText = text.substring(currentIndexBegin, currentIndexEnd);
-
-        // add index
-        blocks.push({
-            index: {
-                start: currentIndexBegin,
-                end: currentIndexEnd,
-            },
-            text: blockText,
-        });
-
-        currentIndexBegin = text.indexOf(delimiterHaikuBlockStart, currentIndexEnd);
-    }
-
-    return blocks;
 }
