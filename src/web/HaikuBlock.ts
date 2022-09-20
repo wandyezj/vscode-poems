@@ -1,4 +1,3 @@
-
 export interface HaikuBlock {
     index: {
         /**
@@ -10,6 +9,7 @@ export interface HaikuBlock {
          */
         end: number;
     };
+
     /**
      * text
      */
