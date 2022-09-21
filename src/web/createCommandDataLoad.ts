@@ -10,7 +10,7 @@ export function loadDataFromActiveTextEditor() {
         const text = document.getText();
         const dataBlock = getDataBlock(text);
         if (dataBlock !== undefined) {
-            addToWordMapFromJson(text);
+            addToWordMapFromJson(dataBlock.data);
         }
     }
 }

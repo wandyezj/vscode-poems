@@ -1,4 +1,6 @@
-export function getSyllables(word: string): number | undefined {
+import { logTrace } from "./logTrace";
+
+export function getWordSyllables(word: string): number | undefined {
     const result = globalWordMap.get(word);
 
     if (result === undefined) {
@@ -41,12 +43,18 @@ export function addToWordMapFromJson(s: string) {
  */
 export async function populateReferenceWithWords(words: string[]) {
     // remove duplicates, take first item in position
-    const uniqueWords = words.filter((item, position, array) => array.indexOf(item) == position);
+    const uniqueWords = words.filter((item, position, array) => array.indexOf(item) === position);
 
     // all words that are new
     const newWords = uniqueWords.filter((word) => !globalWordMap.has(word));
 
     const newQueryWords = newWords.filter((word) => !globalWordQueryMap.has(word));
+
+    if (newQueryWords.length === 0) {
+        return;
+    }
+
+    logTrace(`Query: [${newQueryWords.length}] ${newQueryWords.join(" ")}`);
 
     // kick off queries
     newQueryWords.map((word) => {
@@ -98,7 +106,14 @@ async function getSyllablesFromDatamuse(word: string) {
     const o: DatamuseQueryItem[] = await response.json();
 
     // get the list of words and syllables, remove any with whitespace
-    const list = o.filter(({ word }) => !hasWhiteSpace(word));
+    const list = o.filter(({ word }) => !hasWhiteSpace(word))
+    .map(({word, numSyllables}) => {
+        // Only return exact things
+        return {
+            word,
+            numSyllables
+        };
+    });
 
     return list;
 }

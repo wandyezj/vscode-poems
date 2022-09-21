@@ -1,8 +1,12 @@
 import * as vscode from "vscode";
 
-export function createUpdateDecorationsTrigger(
-    updateDecorationsCallback: (activeEditor: vscode.TextEditor) => void
-) {
+export function createUpdateDecorationsTrigger({
+    updateDecorationsCallback,
+    activeEditorChangedCallback,
+}: {
+    updateDecorationsCallback: (activeEditor: vscode.TextEditor) => void;
+    activeEditorChangedCallback: () => void;
+}) {
     /**
      * currently active text editor, can only edit in a single editor at a time.
      */
@@ -33,6 +37,7 @@ export function createUpdateDecorationsTrigger(
     }
 
     if (activeEditor) {
+        activeEditorChangedCallback();
         triggerUpdateDecorations({ throttle: false });
     }
 
@@ -42,6 +47,7 @@ export function createUpdateDecorationsTrigger(
         (editor) => {
             activeEditor = editor;
             if (editor) {
+                activeEditorChangedCallback();
                 triggerUpdateDecorations({ throttle: true });
             }
         },

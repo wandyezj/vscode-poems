@@ -1,17 +1,26 @@
+import { getWordSyllables, populateReferenceWithWords } from "./datamuse";
 import { HaikuBlock } from "./HaikuBlock";
-import { logTrace } from "./logTrace";
 
 export function analyzeHaikuBlock(block: HaikuBlock): HaikuLint[] {
     // Break up haiku into tokens for analysis
     const text = block.innerText.text;
     const tokens = parseHaikuTokens(text);
 
+    // not awaited so not all tokens may be populated by the time they are referenced
+    populateReferenceWithWords(
+        tokens.filter(({ tokenType }) => tokenType === HaikuTokenType.Word).map(({ text }) => text)
+    );
+
+    const lint = lintHaiku(tokens);
+
     // Analyze tokens look for syllables per line, create haiku issues
 
     const lintWords = tokens.map((token) => {
+        const word = token.text;
+        const syllableCount = getWordSyllables(word) || "?";
         const lintWord: HaikuLint = {
             lintType: HaikuLintType.Word,
-            message: token.text,
+            message: `${word} ${syllableCount}`,
             indexStart: token.indexStart,
             indexEnd: token.indexEnd,
         };
@@ -26,7 +35,63 @@ export function analyzeHaikuBlock(block: HaikuBlock): HaikuLint[] {
         indexEnd: block.innerText.text.length,
     };
 
-    const lints = [lintText, ...lintWords];
+    const lints = [lintText, ...lintWords, ...lint];
+
+    return lints;
+}
+
+/**
+ * check if hiaku holds up
+ * @param tokens
+ */
+function lintHaiku(tokens: HaikuToken[]): HaikuLint[] {
+    // no tokens do nothing
+    if (tokens.length === 0) {
+        return [];
+    }
+
+    // figure out lines of the haiku
+    const lines: HaikuToken[][] = [];
+
+    const currentLine: HaikuToken[] = [];
+    for (const token of tokens) {
+        if (token.tokenType === HaikuTokenType.Newline) {
+            if (currentLine.length > 0) {
+                lines.push(currentLine);
+            }
+        }
+        if (token.tokenType === HaikuTokenType.Word) {
+            currentLine.push(token);
+        }
+    }
+
+    // last piece
+    if (currentLine.length > 0) {
+        lines.push(currentLine);
+    }
+
+    const lints: HaikuLint[] = [];
+    // check number of lines don't count lines before or in between
+    if (lines.length !== 3) {
+        const indexStart = tokens[0].indexStart;
+        const indexEnd = tokens[tokens.length - 1].indexEnd;
+        const tooMany = lines.length > 3;
+
+        const lintType = tooMany ? HaikuLintType.TooManyLines : HaikuLintType.TooFewLines;
+        const message = `Too ${tooMany ? "many" : "few"} Lines. Haiku's have 3 lines, found ${
+            lines.length
+        }.`;
+        const lintLineCount: HaikuLint = {
+            lintType,
+            message,
+            indexStart,
+            indexEnd,
+        };
+
+        lints.push(lintLineCount);
+    }
+
+    // check number of syllables per line
 
     return lints;
 }
@@ -53,6 +118,8 @@ export enum HaikuLintType {
     Word,
     TooManySyllablesOnLine,
     TooFewSyllablesOnLine,
+    TooFewLines,
+    TooManyLines,
 }
 
 function parseHaikuTokens(text: string): HaikuToken[] {

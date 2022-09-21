@@ -3,7 +3,7 @@
 import * as vscode from "vscode";
 import * as Package from "../../package.json";
 import { createCommandDataSave } from "./createCommandDataSave";
-import { createCommandDataLoad } from "./createCommandDataLoad";
+import { createCommandDataLoad, loadDataFromActiveTextEditor } from "./createCommandDataLoad";
 import { createCommandVersion } from "./createCommandVersion";
 import { createUpdateDecorationsTrigger } from "./createUpdateDecorationsTrigger";
 import { createTrace, logTrace } from "./logTrace";
@@ -28,7 +28,13 @@ export function activate(context: vscode.ExtensionContext) {
 
             // When in a markdown file activate
             // parse markdown file loop for ```poems-haiku ``` sections and analyze the poems within applying highlighting
-            ...createUpdateDecorationsTrigger(updateDecorations),
+            ...createUpdateDecorationsTrigger({
+                updateDecorationsCallback: updateDecorations,
+                activeEditorChangedCallback: () => {
+                    // load any new data
+                    loadDataFromActiveTextEditor();
+                },
+            }),
         ]
     );
 }
