@@ -23,7 +23,7 @@ export function getWordMapToJson(): string {
  * adds values to word map if they do not already exist
  * @param s
  */
-export function setWordMapFromJson(s: string) {
+export function addToWordMapFromJson(s: string) {
     const data: DatamuseQueryItem[] = JSON.parse(s);
 
     data.forEach((value) => {
