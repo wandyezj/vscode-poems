@@ -18,6 +18,7 @@ export function activate(context: vscode.ExtensionContext) {
 
     // Global trace see in Output -> poems
     createTrace(`${Package.name}`);
+    const start = Date.now();
     logTrace(`activate ${Package.name} ${Package.version}`);
 
     context.subscriptions.push(
@@ -37,6 +38,10 @@ export function activate(context: vscode.ExtensionContext) {
             }),
         ]
     );
+
+    const end = Date.now();
+    const time = end - start;
+    logTrace(`activated in ${time} ms`);
 }
 
 // this method is called when your extension is deactivated

@@ -3,6 +3,7 @@ import { getWordMapToJson } from "./datamuse";
 import { delimiterDataBlockEnd, delimiterDataBlockStart } from "./delimiters";
 import { getDataBlock } from "./getDataBlock";
 import { isFileMarkdown } from "./isFileMarkdown";
+import { logTrace } from "./logTrace";
 
 export function saveDataInActiveTextEditor() {
     const activeEditor = vscode.window.activeTextEditor;
@@ -19,7 +20,9 @@ export function saveDataInActiveTextEditor() {
                     end,
                     `\n${delimiterDataBlockStart}${newData}\n${delimiterDataBlockEnd}`
                 );
+                logTrace("data load");
             });
+
         } else {
             const originalData = dataBlock.data;
             const startIndex = text.indexOf(originalData);
@@ -32,6 +35,7 @@ export function saveDataInActiveTextEditor() {
 
             activeEditor.edit((editBuilder) => {
                 editBuilder.replace(range, newData + "\n");
+                logTrace("data load");
             });
         }
     }

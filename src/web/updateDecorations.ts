@@ -27,8 +27,29 @@ export function updateDecorations(activeEditor: vscode.TextEditor) {
         logTrace(`blocks ${blocks.length}`);
 
         const decorationsMap = getDecorations(blocks, document);
+
+        // consolidate based on decoration Type first
+        const consolidatedDecorations = new Map<string, {
+            decorations: vscode.DecorationOptions[];
+            decorationType: vscode.TextEditorDecorationType;
+        }
+        >();
+
+
         for (const [lintType, decorations] of decorationsMap.entries()) {
-            const decorationType = getDecorationTypeHaiku(lintType);
+            const {decoration, uid} = getDecorationTypeHaiku(lintType);
+            if (decoration === undefined) {
+                continue;
+            }
+
+            if (!consolidatedDecorations.has(uid)) {
+                consolidatedDecorations.set(uid, {decorations: [], decorationType: decoration})
+            }
+
+            consolidatedDecorations.get(uid)?.decorations.push(...decorations);
+        }
+
+        for (const [uid, {decorations, decorationType}] of consolidatedDecorations.entries()) {
             activeEditor.setDecorations(decorationType, decorations);
         }
 

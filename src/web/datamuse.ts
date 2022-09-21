@@ -16,8 +16,15 @@ const globalWordMap = new Map<string, { word: string; numSyllables: number }>();
 
 const globalWordQueryMap = new Map<string, Promise<DatamuseQueryItem[]>>();
 
+/**
+ * words actually queried
+ */
+const queryWords = new Set();
+
+
 export function getWordMapToJson(): string {
-    const s = JSON.stringify(Array.from(globalWordMap.values()));
+    const values = Array.from(globalWordMap.values()).filter(({word}) => queryWords.has(word));
+    const s = JSON.stringify(values, undefined, 4);
     return s;
 }
 
@@ -45,10 +52,16 @@ export async function populateReferenceWithWords(words: string[]) {
     // remove duplicates, take first item in position
     const uniqueWords = words.filter((item, position, array) => array.indexOf(item) === position);
 
+    uniqueWords.forEach( word => {
+        queryWords.add(word);
+    });
+
     // all words that are new
     const newWords = uniqueWords.filter((word) => !globalWordMap.has(word));
 
     const newQueryWords = newWords.filter((word) => !globalWordQueryMap.has(word));
+
+
 
     if (newQueryWords.length === 0) {
         return;

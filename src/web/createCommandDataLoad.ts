@@ -2,6 +2,7 @@ import * as vscode from "vscode";
 import { addToWordMapFromJson } from "./datamuse";
 import { getDataBlock } from "./getDataBlock";
 import { isFileMarkdown } from "./isFileMarkdown";
+import { logTrace } from "./logTrace";
 
 export function loadDataFromActiveTextEditor() {
     const activeEditor = vscode.window.activeTextEditor;
@@ -10,6 +11,7 @@ export function loadDataFromActiveTextEditor() {
         const text = document.getText();
         const dataBlock = getDataBlock(text);
         if (dataBlock !== undefined) {
+            logTrace("data load");
             addToWordMapFromJson(dataBlock.data);
         }
     }

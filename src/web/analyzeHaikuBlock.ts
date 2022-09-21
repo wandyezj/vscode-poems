@@ -1,6 +1,11 @@
 import { getWordSyllables, populateReferenceWithWords } from "./datamuse";
 import { HaikuBlock } from "./HaikuBlock";
 
+/**
+ * Analyze a block of Haiku Text and return Lint information.
+ * @param block 
+ * @returns 
+ */
 export function analyzeHaikuBlock(block: HaikuBlock): HaikuLint[] {
     // Break up haiku into tokens for analysis
     const text = block.innerText.text;
@@ -41,23 +46,20 @@ export function analyzeHaikuBlock(block: HaikuBlock): HaikuLint[] {
 }
 
 /**
- * check if hiaku holds up
- * @param tokens
+ * Group into lines of words. Empty lines are ignored.
+ * @param tokens 
+ * @returns 
  */
-function lintHaiku(tokens: HaikuToken[]): HaikuLint[] {
-    // no tokens do nothing
-    if (tokens.length === 0) {
-        return [];
-    }
-
+function groupTokensByLine(tokens: HaikuToken[]): HaikuToken[][] {
     // figure out lines of the haiku
     const lines: HaikuToken[][] = [];
 
-    const currentLine: HaikuToken[] = [];
+    let currentLine: HaikuToken[] = [];
     for (const token of tokens) {
         if (token.tokenType === HaikuTokenType.Newline) {
             if (currentLine.length > 0) {
                 lines.push(currentLine);
+                currentLine = [];
             }
         }
         if (token.tokenType === HaikuTokenType.Word) {
@@ -70,6 +72,39 @@ function lintHaiku(tokens: HaikuToken[]): HaikuLint[] {
         lines.push(currentLine);
     }
 
+    return lines;
+}
+
+/**
+ * Gets total number of syllables present in a line.
+ * @param line 
+ * @returns the count of syllables in the line by counting the syllables for each word, or undefined if any words syllables are undefined.
+ */
+function getSyllablesInLine(line: HaikuToken[]): { count: number, hasUndefined: boolean } {
+    const syllables = line.map(({ text }) => getWordSyllables(text));
+    const hasUndefined = syllables.includes(undefined);
+
+    const count = (syllables.filter(x => x !== undefined) as number[]).reduce((previous, current) => previous + current, 0);
+
+    return {
+        count,
+        hasUndefined
+    }
+
+}
+
+/**
+ * check if hiaku holds up
+ * @param tokens
+ */
+function lintHaiku(tokens: HaikuToken[]): HaikuLint[] {
+    // no tokens do nothing
+    if (tokens.length === 0) {
+        return [];
+    }
+
+    const lines = groupTokensByLine(tokens);
+
     const lints: HaikuLint[] = [];
     // check number of lines don't count lines before or in between
     if (lines.length !== 3) {
@@ -78,9 +113,8 @@ function lintHaiku(tokens: HaikuToken[]): HaikuLint[] {
         const tooMany = lines.length > 3;
 
         const lintType = tooMany ? HaikuLintType.TooManyLines : HaikuLintType.TooFewLines;
-        const message = `Too ${tooMany ? "many" : "few"} Lines. Haiku's have 3 lines, found ${
-            lines.length
-        }.`;
+        const message = `Too ${tooMany ? "many" : "few"} Lines. Haiku's have 3 lines, found ${lines.length
+            }.`;
         const lintLineCount: HaikuLint = {
             lintType,
             message,
@@ -92,6 +126,55 @@ function lintHaiku(tokens: HaikuToken[]): HaikuLint[] {
     }
 
     // check number of syllables per line
+    if (lines.length === 3) {
+        const syllableLints = [5, 7, 5].map((value, index) => {
+            const line = lines[index];
+            const { count, hasUndefined } = getSyllablesInLine(line);
+
+            let message: string = "";
+            let lintType: HaikuLintType;// | undefined = undefined
+            if (hasUndefined) {
+                // can only determine if there are too many
+                if (count > value) {
+                    // too many, even though there are undefined words
+                    message = `Too many syllables, found ${count} expected ${value}`;
+                    lintType = HaikuLintType.TooManySyllablesOnLine;
+                } else {
+                    // cant make any other determination
+                    return undefined
+                }
+
+            } else if (count < value) {
+                // too few
+                message = `Too few syllables, found ${count} expected ${value}`;
+                lintType = HaikuLintType.TooFewSyllablesOnLine;
+            } else if (count > value) {
+                // too many
+                message = `Too many syllables, found ${count} expected ${value}`;
+                lintType = HaikuLintType.TooManySyllablesOnLine;
+            } else {
+                // Perfect!
+                return undefined;
+            }
+
+            // underline whole line
+            const indexStart = line[0].indexStart;
+            const indexEnd = line[line.length - 1].indexEnd;
+
+            let lint: HaikuLint = {
+                lintType,
+                message,
+                indexStart,
+                indexEnd
+            };
+
+            return lint;
+
+        }).filter(x => x !== undefined) as HaikuLint[];
+
+        lints.push(...syllableLints);
+    }
+
 
     return lints;
 }
