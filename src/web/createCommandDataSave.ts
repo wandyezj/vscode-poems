@@ -4,26 +4,24 @@ import { delimiterDataBlockEnd, delimiterDataBlockStart } from "./delimiters";
 import { getDataBlock } from "./getDataBlock";
 import { isFileMarkdown } from "./isFileMarkdown";
 
-function saveDataInActiveTextEditor() {
+export function saveDataInActiveTextEditor() {
     const activeEditor = vscode.window.activeTextEditor;
     const document = activeEditor?.document;
-    if (
-        activeEditor !== undefined &&
-        document !== undefined &&
-        isFileMarkdown(document.fileName)
-    ) {
+    if (activeEditor !== undefined && document !== undefined && isFileMarkdown(document.fileName)) {
         const text = document.getText();
         const dataBlock = getDataBlock(text);
         const newData = getWordMapToJson();
         if (dataBlock === undefined) {
-            
-            const end = document.positionAt(text.length -1);
+            const end = document.positionAt(text.length - 1);
             // Write new data block at end of document
             activeEditor.edit((editBuilder) => {
-                editBuilder.insert(end, `\n${delimiterDataBlockStart}${newData}\n${delimiterDataBlockEnd}`);
+                editBuilder.insert(
+                    end,
+                    `\n${delimiterDataBlockStart}${newData}\n${delimiterDataBlockEnd}`
+                );
             });
         } else {
-            const originalData = dataBlock.data
+            const originalData = dataBlock.data;
             const startIndex = text.indexOf(originalData);
             const endIndex = startIndex + originalData.length;
 
@@ -33,15 +31,13 @@ function saveDataInActiveTextEditor() {
             const range = new vscode.Range(positionStart, positionEnd);
 
             activeEditor.edit((editBuilder) => {
-                editBuilder.replace(range, newData +"\n");
+                editBuilder.replace(range, newData + "\n");
             });
         }
     }
 }
 
-
 export function createCommandDataSave() {
-
     const disposable = vscode.commands.registerCommand("poems.dataSave", () => {
         saveDataInActiveTextEditor();
         vscode.window.showInformationMessage(`Data Save`);

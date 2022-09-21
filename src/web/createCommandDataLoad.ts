@@ -3,14 +3,10 @@ import { addToWordMapFromJson } from "./datamuse";
 import { getDataBlock } from "./getDataBlock";
 import { isFileMarkdown } from "./isFileMarkdown";
 
-function loadDataFromActiveTextEditor() {
+export function loadDataFromActiveTextEditor() {
     const activeEditor = vscode.window.activeTextEditor;
     const document = activeEditor?.document;
-    if (
-        activeEditor !== undefined &&
-        document !== undefined &&
-        isFileMarkdown(document.fileName)
-    ) {
+    if (activeEditor !== undefined && document !== undefined && isFileMarkdown(document.fileName)) {
         const text = document.getText();
         const dataBlock = getDataBlock(text);
         if (dataBlock !== undefined) {
