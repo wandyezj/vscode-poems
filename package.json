@@ -13,6 +13,8 @@
     ],
     "activationEvents": [
         "onCommand:poems.version",
+        "onCommand:poems.dataSave",
+        "onCommand:poems.dataLoad",
         "onLanguage:markdown"
     ],
     "browser": "./dist/web/extension.js",
@@ -21,6 +23,14 @@
             {
                 "command": "poems.version",
                 "title": "Poems Version"
+            },
+            {
+                "command": "poems.dataSave",
+                "title": "Poems Data Save"
+            },
+            {
+                "command": "poems.dataLoad",
+                "title": "Poems Data Load"
             }
         ]
     },

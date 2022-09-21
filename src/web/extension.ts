@@ -2,6 +2,8 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from "vscode";
 import * as Package from "../../package.json";
+import { createCommandDataSave } from "./createCommandDataSave";
+import { createCommandDataLoad } from "./createCommandDataLoad";
 import { createCommandVersion } from "./createCommandVersion";
 import { createUpdateDecorationsTrigger } from "./createUpdateDecorationsTrigger";
 import { createTrace, logTrace } from "./logTrace";
@@ -21,6 +23,8 @@ export function activate(context: vscode.ExtensionContext) {
     context.subscriptions.push(
         ...[
             createCommandVersion(),
+            createCommandDataSave(),
+            createCommandDataLoad(),
 
             // When in a markdown file activate
             // parse markdown file loop for ```poems-haiku ``` sections and analyze the poems within applying highlighting

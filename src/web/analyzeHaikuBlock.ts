@@ -1,4 +1,5 @@
 import { HaikuBlock } from "./HaikuBlock";
+import { logTrace } from "./logTrace";
 
 export function analyzeHaikuBlock(block: HaikuBlock): HaikuLint[] {
     // Break up haiku into tokens for analysis
@@ -55,31 +56,66 @@ export enum HaikuLintType {
 }
 
 function parseHaikuTokens(text: string): HaikuToken[] {
-    // TODO this is not 100% correct, do a better job searching
     const words = text
+        .replace(/\r/g, "")
         .split("\n")
         .map((line) => line.split(" "))
         .flat();
 
     let currentIndex = 0;
-    const wordTokens = words.map((word) => {
-        const indexStart = text.indexOf(word, currentIndex);
-        const indexEnd = indexStart + word.length;
+    const wordTokens = words
+        .filter((word) => word.trim() !== "")
+        .map((word) => {
+            const indexStart = text.indexOf(word, currentIndex);
+            const indexEnd = indexStart + word.length;
 
-        // look at next position
-        currentIndex = indexEnd;
+            // look at next position
+            currentIndex = indexEnd;
 
-        const token: HaikuToken = {
-            tokenType: HaikuTokenType.Word,
+            const token: HaikuToken = {
+                tokenType: HaikuTokenType.Word,
+                indexStart,
+                indexEnd,
+                text: word,
+            };
+
+            return token;
+        });
+
+    // grab newline tokens
+
+    const newlineTokens: HaikuToken[] = [];
+    const newline = "\n";
+    let position = text.indexOf(newline);
+    while (position !== -1 && position < text.length) {
+        const indexStart = position;
+        const indexEnd = position + newline.length;
+        const newlineToken: HaikuToken = {
+            tokenType: HaikuTokenType.Newline,
             indexStart,
             indexEnd,
-            text: word,
+            text: text.substring(indexStart, indexEnd),
         };
+        newlineTokens.push(newlineToken);
+        position = text.indexOf(newline, position + newline.length);
+    }
 
-        return token;
+    const allTokens = [...wordTokens, ...newlineTokens];
+
+    // sort token order
+    allTokens.sort((aToken, bToken) => {
+        const a = aToken.indexStart;
+        const b = bToken.indexStart;
+        if (a === b) {
+            return 0;
+        }
+        return a > b ? 1 : -1;
     });
 
-    return wordTokens;
+    // Display parsed tokens
+    //logTrace(allTokens.map(t => `(${t.indexStart}, ${t.indexEnd} [${t.text === newline ? "." : t.text}])` ).join(" "));
+
+    return allTokens;
 }
 
 interface HaikuToken {

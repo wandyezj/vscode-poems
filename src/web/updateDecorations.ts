@@ -4,6 +4,7 @@ import { getHaikuBlocks } from "./getHaikuBlocks";
 import { HaikuBlock } from "./HaikuBlock";
 import { getDecorationTypeHaiku } from "./getDecorationTypeHaikuBlock";
 import { analyzeHaikuBlock, HaikuLintType } from "./analyzeHaikuBlock";
+import { isFileMarkdown } from "./isFileMarkdown";
 
 /**
  * Update decorations for the active editor
@@ -11,10 +12,10 @@ import { analyzeHaikuBlock, HaikuLintType } from "./analyzeHaikuBlock";
  */
 export function updateDecorations(activeEditor: vscode.TextEditor) {
     const filename = activeEditor.document.fileName;
-    const isFileMarkdown = filename.endsWith(".md");
+    const isMarkdown = isFileMarkdown(filename);
 
     // Only operate on Markdown files
-    if (isFileMarkdown) {
+    if (isMarkdown) {
         logTrace(`updateDecorations`);
         logTrace(filename);
         const document = activeEditor.document;
