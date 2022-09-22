@@ -21,9 +21,8 @@ const globalWordQueryMap = new Map<string, Promise<DatamuseQueryItem[]>>();
  */
 const queryWords = new Set();
 
-
 export function getWordMapToJson(): string {
-    const values = Array.from(globalWordMap.values()).filter(({word}) => queryWords.has(word));
+    const values = Array.from(globalWordMap.values()).filter(({ word }) => queryWords.has(word));
     const s = JSON.stringify(values, undefined, 4);
     return s;
 }
@@ -52,7 +51,7 @@ export async function populateReferenceWithWords(words: string[]) {
     // remove duplicates, take first item in position
     const uniqueWords = words.filter((item, position, array) => array.indexOf(item) === position);
 
-    uniqueWords.forEach( word => {
+    uniqueWords.forEach((word) => {
         queryWords.add(word);
     });
 
@@ -60,8 +59,6 @@ export async function populateReferenceWithWords(words: string[]) {
     const newWords = uniqueWords.filter((word) => !globalWordMap.has(word));
 
     const newQueryWords = newWords.filter((word) => !globalWordQueryMap.has(word));
-
-
 
     if (newQueryWords.length === 0) {
         return;
@@ -119,14 +116,15 @@ async function getSyllablesFromDatamuse(word: string) {
     const o: DatamuseQueryItem[] = await response.json();
 
     // get the list of words and syllables, remove any with whitespace
-    const list = o.filter(({ word }) => !hasWhiteSpace(word))
-    .map(({word, numSyllables}) => {
-        // Only return exact things
-        return {
-            word,
-            numSyllables
-        };
-    });
+    const list = o
+        .filter(({ word }) => !hasWhiteSpace(word))
+        .map(({ word, numSyllables }) => {
+            // Only return exact things
+            return {
+                word,
+                numSyllables,
+            };
+        });
 
     return list;
 }

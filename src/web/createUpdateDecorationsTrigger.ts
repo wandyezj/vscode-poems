@@ -13,7 +13,7 @@ export function createUpdateDecorationsTrigger({
     let activeEditor = vscode.window.activeTextEditor;
 
     function updateDecorations() {
-        if (activeEditor !== undefined) { 
+        if (activeEditor !== undefined) {
             updateDecorationsCallback(activeEditor);
         }
     }
@@ -24,7 +24,13 @@ export function createUpdateDecorationsTrigger({
      * Triggers update 500 milliseconds after last edit if throttled.
      * This prevents continuous triggering of updateDecorations.
      */
-    function triggerUpdateDecorations({ throttle, updatedEditor }: { throttle: boolean, updatedEditor?: boolean }) {
+    function triggerUpdateDecorations({
+        throttle,
+        updatedEditor,
+    }: {
+        throttle: boolean;
+        updatedEditor?: boolean;
+    }) {
         if (timeout) {
             clearTimeout(timeout);
             timeout = undefined;
@@ -34,7 +40,7 @@ export function createUpdateDecorationsTrigger({
                 if (updatedEditor) {
                     activeEditorChangedCallback();
                 }
-                updateDecorations()
+                updateDecorations();
             }, 500);
         } else {
             updateDecorations();
@@ -53,7 +59,7 @@ export function createUpdateDecorationsTrigger({
         (editor) => {
             activeEditor = editor;
             if (editor) {
-                triggerUpdateDecorations({ throttle: true , updatedEditor: true});
+                triggerUpdateDecorations({ throttle: true, updatedEditor: true });
             }
         },
         null,

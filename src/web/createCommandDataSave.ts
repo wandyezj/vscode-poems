@@ -22,7 +22,6 @@ export function saveDataInActiveTextEditor() {
                 );
                 logTrace("data load");
             });
-
         } else {
             const originalData = dataBlock.data;
             const startIndex = text.indexOf(originalData);

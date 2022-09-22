@@ -14,21 +14,21 @@ import { HaikuLintType } from "./analyzeHaikuBlock";
  */
 const decorationNone = {
     uid: "none",
-    decoration:vscode.window.createTextEditorDecorationType({
+    decoration: vscode.window.createTextEditorDecorationType({
         //textDecoration: "none",
     }),
 };
 
 const decorationUnderlineWavyYellow = {
     uid: "underline wavy yellow",
-    decoration:vscode.window.createTextEditorDecorationType({
+    decoration: vscode.window.createTextEditorDecorationType({
         textDecoration: "underline wavy yellow",
     }),
 };
 
 const decorationUnderlineYellow = {
     uid: "underline yellow",
-    decoration:vscode.window.createTextEditorDecorationType({
+    decoration: vscode.window.createTextEditorDecorationType({
         textDecoration: "underline yellow",
     }),
 };
@@ -36,13 +36,16 @@ const decorationUnderlineYellow = {
 const decorationUndefined = {
     uid: "undefined",
     decoration: undefined,
-}
+};
 
-export function getDecorationTypeHaiku(type: HaikuLintType): {decoration: vscode.TextEditorDecorationType | undefined, uid: string} {
+export function getDecorationTypeHaiku(type: HaikuLintType): {
+    decoration: vscode.TextEditorDecorationType | undefined;
+    uid: string;
+} {
     // decorations need to be unique?
     switch (type) {
         case HaikuLintType.Text:
-            return  decorationUndefined;
+            return decorationUndefined;
         case HaikuLintType.Word:
             return decorationNone;
         case HaikuLintType.TooFewLines:
