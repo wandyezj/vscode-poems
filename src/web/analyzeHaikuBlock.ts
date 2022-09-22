@@ -1,3 +1,4 @@
+import { triggerUpdateDecorations } from "./createUpdateDecorationsTrigger";
 import { getWordSyllables, populateReferenceWithWords } from "./datamuse";
 import { HaikuBlock } from "./HaikuBlock";
 
@@ -14,7 +15,12 @@ export function analyzeHaikuBlock(block: HaikuBlock): HaikuLint[] {
     // not awaited so not all tokens may be populated by the time they are referenced
     populateReferenceWithWords(
         tokens.filter(({ tokenType }) => tokenType === HaikuTokenType.Word).map(({ text }) => text)
-    );
+    ).then(({ areNewWords }) => {
+        if (areNewWords) {
+            // retrigger if query is successful and there are new words
+            triggerUpdateDecorations();
+        }
+    });
 
     const lint = lintHaiku(tokens);
 

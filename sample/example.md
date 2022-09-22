@@ -37,7 +37,7 @@ line one
 line two
 ```
 
-### just right lines
+### just right lines wrong syllables
 
 ```poems-haiku
 line one

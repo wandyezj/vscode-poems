@@ -16,15 +16,15 @@ export function updateDecorations(activeEditor: vscode.TextEditor) {
 
     // Only operate on Markdown files
     if (isMarkdown) {
-        logTrace(`updateDecorations`);
-        logTrace(filename);
+        //logTrace(`updateDecorations: start ${filename}`);
+        //logTrace(filename);
         const document = activeEditor.document;
         const text = document.getText();
 
         // Locate Haiku blocks
         const blocks = getHaikuBlocks(text);
 
-        logTrace(`blocks ${blocks.length}`);
+        //logTrace(`updateDecorations: blocks [${blocks.length}]`);
 
         const decorationsMap = getDecorations(blocks, document);
 
@@ -63,7 +63,7 @@ export function updateDecorations(activeEditor: vscode.TextEditor) {
             activeEditor.setDecorations(decorationType, decorations);
         }
 
-        logTrace("wrote Decorations");
+        logTrace("Wrote Decorations");
     }
 }
 

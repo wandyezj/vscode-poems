@@ -5,9 +5,11 @@ import * as Package from "../../package.json";
 import { createCommandDataSave } from "./createCommandDataSave";
 import { createCommandDataLoad, loadDataFromActiveTextEditor } from "./createCommandDataLoad";
 import { createCommandVersion } from "./createCommandVersion";
-import { createUpdateDecorationsTrigger } from "./createUpdateDecorationsTrigger";
+import {
+    createUpdateDecorationsTrigger,
+    triggerUpdateDecorations,
+} from "./createUpdateDecorationsTrigger";
 import { createTrace, logTrace } from "./logTrace";
-import { updateDecorations } from "./updateDecorations";
 
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
@@ -21,6 +23,9 @@ export function activate(context: vscode.ExtensionContext) {
     const start = Date.now();
     logTrace(`activate ${Package.name} ${Package.version}`);
 
+    // slows down startup if this callback takes a while
+    loadDataFromActiveTextEditor();
+
     context.subscriptions.push(
         ...[
             createCommandVersion(),
@@ -29,15 +34,12 @@ export function activate(context: vscode.ExtensionContext) {
 
             // When in a markdown file activate
             // parse markdown file loop for ```poems-haiku ``` sections and analyze the poems within applying highlighting
-            ...createUpdateDecorationsTrigger({
-                updateDecorationsCallback: updateDecorations,
-                activeEditorChangedCallback: () => {
-                    // load any new data
-                    loadDataFromActiveTextEditor();
-                },
-            }),
+            ...createUpdateDecorationsTrigger(),
         ]
     );
+
+    // slows down startup if this callback takes a while
+    triggerUpdateDecorations();
 
     const end = Date.now();
     const time = end - start;

@@ -11,8 +11,9 @@ export function getWordSyllables(word: string): number | undefined {
 
 /**
  * reference to look up all the words
+ * num syllables can be undefined if word is not found (case of misspelling)
  */
-const globalWordMap = new Map<string, { word: string; numSyllables: number }>();
+const globalWordMap = new Map<string, { word: string; numSyllables: number | undefined }>();
 
 const globalWordQueryMap = new Map<string, Promise<DatamuseQueryItem[]>>();
 
@@ -46,8 +47,11 @@ export function addToWordMapFromJson(s: string) {
  * populates the reference with the words
  * not guaranteed all words will be populated, best effort
  * @param words
+ * @returns areNewWords true if new words were discovered
  */
-export async function populateReferenceWithWords(words: string[]) {
+export async function populateReferenceWithWords(
+    words: string[]
+): Promise<{ areNewWords: boolean }> {
     // remove duplicates, take first item in position
     const uniqueWords = words.filter((item, position, array) => array.indexOf(item) === position);
 
@@ -61,12 +65,13 @@ export async function populateReferenceWithWords(words: string[]) {
     const newQueryWords = newWords.filter((word) => !globalWordQueryMap.has(word));
 
     if (newQueryWords.length === 0) {
-        return;
+        return { areNewWords: false };
     }
 
     logTrace(`Query: [${newQueryWords.length}] ${newQueryWords.join(" ")}`);
 
     // kick off queries
+    let areNewWords = false;
     newQueryWords.map((word) => {
         const promise = getSyllablesFromDatamuse(word);
         globalWordQueryMap.set(word, promise);
@@ -81,6 +86,12 @@ export async function populateReferenceWithWords(words: string[]) {
                             globalWordMap.set(key, result);
                         }
                     });
+                    // some words might not have a result
+                    if (results.filter((x) => x.word === word).length === 0) {
+                        globalWordMap.set(word, { word, numSyllables: undefined });
+                    } else {
+                        areNewWords = true;
+                    }
                 }
             )
             .finally(() => {
@@ -94,6 +105,8 @@ export async function populateReferenceWithWords(words: string[]) {
         .map((word) => globalWordQueryMap.get(word))
         .filter((promise) => promise !== undefined);
     await Promise.all(openPromises);
+
+    return { areNewWords };
 }
 
 interface DatamuseQueryItem {
