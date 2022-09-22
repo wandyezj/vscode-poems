@@ -2,7 +2,7 @@ import { logTrace } from "./logTrace";
 import * as vscode from "vscode";
 import { getHaikuBlocks } from "./getHaikuBlocks";
 import { HaikuBlock } from "./HaikuBlock";
-import { getDecorationTypeHaiku } from "./getDecorationTypeHaikuBlock";
+import { allDecorationTypes, getDecorationTypeHaiku } from "./getDecorationTypeHaikuBlock";
 import { analyzeHaikuBlock, HaikuLintType } from "./analyzeHaikuBlock";
 import { isFileMarkdown } from "./isFileMarkdown";
 
@@ -36,6 +36,15 @@ export function updateDecorations(activeEditor: vscode.TextEditor) {
                 decorationType: vscode.TextEditorDecorationType;
             }
         >();
+
+        // initialize consolidatedDecorations
+        // important that every entry shows up
+        allDecorationTypes.forEach((value) => {
+            const decorationType = value.decoration;
+            if (decorationType !== undefined) {
+                consolidatedDecorations.set(value.uid, { decorations: [], decorationType });
+            }
+        });
 
         for (const [lintType, decorations] of decorationsMap.entries()) {
             const { decoration, uid } = getDecorationTypeHaiku(lintType);

@@ -6,11 +6,16 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+### Fixed
+
+- README example
+- Lint markers now disappear after fixing the issue
+
 ## [0.0.1] - 2022-09-21
 
 ### Added
 
-- Hovering over a word shows syllables inside a `poems-haiku` block. (`?` indicates syllables are not yet loaded) 
+- Hovering over a word shows syllables inside a `poems-haiku` block. (`?` indicates syllables are not yet loaded)
 - IntelliSense for:
     - too many lines
     - too few lines

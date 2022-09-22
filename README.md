@@ -7,7 +7,7 @@ An extension to help you write poems in markdown.
 Provides haiku poem linting for fenced code blocks in markdown files with language specified as `poems-haiku`.
 
 ````text
-```poems-data
+```poems-haiku
 haikus are simple
 count syllables on each line
 check five seven five
@@ -15,6 +15,10 @@ check five seven five
 ````
 
 ## Release Notes
+
+### 0.0.2
+
+- Bug Fixes
 
 ### 0.0.1
 

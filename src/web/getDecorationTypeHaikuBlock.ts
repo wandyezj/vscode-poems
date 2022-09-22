@@ -38,22 +38,32 @@ const decorationUndefined = {
     decoration: undefined,
 };
 
-export function getDecorationTypeHaiku(type: HaikuLintType): {
+export interface DecorationType {
     decoration: vscode.TextEditorDecorationType | undefined;
     uid: string;
-} {
-    // decorations need to be unique?
-    switch (type) {
-        case HaikuLintType.Text:
-            return decorationUndefined;
-        case HaikuLintType.Word:
-            return decorationNone;
-        case HaikuLintType.TooFewLines:
-        case HaikuLintType.TooManyLines:
-            return decorationUnderlineYellow;
-        case HaikuLintType.TooFewSyllablesOnLine:
-        case HaikuLintType.TooManySyllablesOnLine:
-        default:
-            return decorationUnderlineWavyYellow;
+}
+
+const lintToDecorationType = new Map<HaikuLintType, DecorationType>([
+    [HaikuLintType.Text, decorationUndefined],
+    [HaikuLintType.Word, decorationNone],
+    [HaikuLintType.TooFewLines, decorationUnderlineYellow],
+    [HaikuLintType.TooManyLines, decorationUnderlineYellow],
+    [HaikuLintType.TooFewSyllablesOnLine, decorationUnderlineWavyYellow],
+    [HaikuLintType.TooManySyllablesOnLine, decorationUnderlineWavyYellow],
+]);
+
+export const allDecorationTypes = Array.from(lintToDecorationType.values()).filter(
+    (value, index, array) => array.indexOf(value) === index
+);
+
+const decorationDefault = decorationUnderlineWavyYellow;
+
+export function getDecorationTypeHaiku(type: HaikuLintType): DecorationType {
+    const decorationType = lintToDecorationType.get(type);
+
+    if (decorationType === undefined) {
+        return decorationDefault;
     }
+
+    return decorationType;
 }
