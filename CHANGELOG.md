@@ -6,10 +6,17 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+## [0.0.2] - 2022-09-22
+
+### Changed
+
+- Minimize impact on datamuse service by caching misspelled words when no results are found to avoid re-query
+- Updated how markers are triggered.
+
 ### Fixed
 
 - README example
-- Lint markers now disappear after fixing the issue
+- Lint markers now update after fixing an issue
 
 ## [0.0.1] - 2022-09-21
 

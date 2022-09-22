@@ -18,7 +18,7 @@ check five seven five
 
 ### 0.0.2
 
-- Bug Fixes
+- Fix Bugs
 
 ### 0.0.1
 
