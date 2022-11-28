@@ -19,6 +19,7 @@ check five seven five
 ### 0.0.3
 
 - Ignore punctuation at the end of words
+- Don't count punctuation as a word
 
 ### 0.0.2
 

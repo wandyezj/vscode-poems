@@ -96,6 +96,20 @@ just the right amount right here
 too few
 ```
 
+## Punctuation
+
+```poems-haiku
+word word word word word
+word word word word word word word
+word word word word word
+```
+
+```poems-haiku
+... word word word word word...
+word!! word... word - word word word word.
+word! word: word, word; word?
+```
+
 ## Poem Data
 
 ```poems-data
