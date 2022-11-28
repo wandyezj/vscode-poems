@@ -227,7 +227,7 @@ function parseHaikuTokens(text: string): HaikuToken[] {
         .map((word) => {
             word = getWordWithoutPunctuation(word);
             if (word.length === 0) {
-                // not a word, pure punctuation
+                // not a 'word', pure punctuation
                 return undefined;
             }
 

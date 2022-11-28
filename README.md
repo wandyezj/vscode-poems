@@ -16,9 +16,10 @@ check five seven five
 
 ## Release Notes
 
-### 0.0.3
+### 0.0.4
 
 - Ignore punctuation at the end of words
+- Don't count punctuation as a word
 
 ### 0.0.2
 
