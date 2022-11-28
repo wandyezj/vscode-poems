@@ -1,5 +1,6 @@
 import { triggerUpdateDecorations } from "./createUpdateDecorationsTrigger";
 import { getWordSyllables, populateReferenceWithWords } from "./datamuse";
+import { getWordWithoutPunctuation } from "./getWordWithoutPunctuation";
 import { HaikuBlock } from "./HaikuBlock";
 
 /**
@@ -221,9 +222,15 @@ function parseHaikuTokens(text: string): HaikuToken[] {
         .flat();
 
     let currentIndex = 0;
-    const wordTokens = words
+    const wordTokensPotential = words
         .filter((word) => word.trim() !== "")
         .map((word) => {
+            word = getWordWithoutPunctuation(word);
+            if (word.length === 0) {
+                // not a word, pure punctuation
+                return undefined;
+            }
+
             const indexStart = text.indexOf(word, currentIndex);
             const indexEnd = indexStart + word.length;
 
@@ -239,6 +246,9 @@ function parseHaikuTokens(text: string): HaikuToken[] {
 
             return token;
         });
+
+    // remove potential undefined tokens
+    const wordTokens = wordTokensPotential.filter((x) => x !== undefined) as HaikuToken[];
 
     // grab newline tokens
 

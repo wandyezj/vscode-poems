@@ -6,6 +6,13 @@ Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how 
 
 ## [Unreleased]
 
+## [0.0.3] - 2022-11-27
+
+### Changed
+
+- Ignore punctuation at the end of words
+- Don't count punctuation as a word
+
 ## [0.0.2] - 2022-09-22
 
 ### Changed

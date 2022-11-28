@@ -16,6 +16,10 @@ check five seven five
 
 ## Release Notes
 
+### 0.0.3
+
+- Ignore punctuation at the end of words
+
 ### 0.0.2
 
 - Fix Bugs
